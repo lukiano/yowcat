@@ -13,9 +13,14 @@ object Cat1Cat2Functor extends Functor {
   val dom = Cat1
   val cod = Cat2
 
-  def mapArr(arr: (XYZ, XYZ)): (Color, Color) = ???
+  def mapArr(arr: (XYZ, XYZ)): (Color, Color) = {
+    (mapObj(dom.dom(arr)), mapObj(dom.cod(arr)))
+  }
 
-  def mapObj(obj: XYZ): Color = ??? 
+  def mapObj(obj: XYZ): Color = {
+    val i = dom.objects.indexOf(obj)
+    cod.objects.drop(i).head
+  }
 }
 
 

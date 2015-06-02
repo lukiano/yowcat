@@ -29,17 +29,23 @@ trait Graph {
 class FreeCategory(val graph: Graph) extends Cat {
   type Edge = graph.Edge
 
-  type Obj = ???
-  def objects: Stream[Obj] = ???
+  type Obj = graph.Node
+  def objects: Stream[Obj] = graph.nodes
 
-  type Arr = ???
+  type Arr = Edge
 
   // All paths formed by edges in the graph!
-  def arrows: Stream[Arr] = ??? 
+  def arrows: Stream[Arr] = identities ++ transitives
 
-  def dom(arr: Arr): Obj = ???
-  def cod(arr: Arr): Obj = ???
+  private def identities: Stream[Arr] = objects map id
+  private def transitives: Stream[Arr] = for {
+    segment <- graph.edges
+    tail <- graph.edges if cod(segment) == dom(tail)
+  } yield comp(segment, tail)
 
-  def comp(g: Arr, f: Arr): Arr = ???
-  def id(obj: Obj): Arr = ???
+  def dom(arr: Arr): Obj = arr._1
+  def cod(arr: Arr): Obj = arr._2
+
+  def comp(g: Arr, f: Arr): Arr = (f._1, g._2)
+  def id(obj: Obj): Arr = (obj, obj)
 }

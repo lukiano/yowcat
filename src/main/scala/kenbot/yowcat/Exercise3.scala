@@ -24,9 +24,9 @@ trait Category[Arr[_,_]] {
  */
 object Hask extends Category[Function1] {
 
-  def compose[A,B,C](g: B => C, f: A => B): A => C = ???
+  def compose[A,B,C](g: B => C, f: A => B): A => C = g compose f
 
-  def id[A]: A => A = ???
+  def id[A]: A => A = identity
 }
 
 import scala.concurrent.Future
@@ -55,9 +55,11 @@ object Rel {
  */
 object RelationsCategory extends Category[Rel] {
 
-  def compose[A,B,C](g: Rel[B, C], f: Rel[A, B]): Rel[A, C] = ??? 
+  def compose[A,B,C](g: Rel[B, C], f: Rel[A, B]): Rel[A, C] = Rel { a =>
+    f(a) flatMap g
+  }
 
-  def id[A]: Rel[A, A] = ??? 
+  def id[A]: Rel[A, A] = Rel(a => Stream(a))
 }
 
 
@@ -88,9 +90,9 @@ trait Monad[M[_]] {
   type KleisliFn[A, B] = A => M[B] 
 
   object KleisliCategory extends Category[KleisliFn] {
-    def compose[A,B,C](g: B => M[C], f: A => M[B]): A => M[C] = ??? 
+    def compose[A,B,C](g: B => M[C], f: A => M[B]): A => M[C] = a => flatMap(f(a), g)
 
-    def id[A]: A => M[A] = ??? 
+    def id[A]: A => M[A] = unit
   }
 }
 

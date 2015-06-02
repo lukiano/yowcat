@@ -66,7 +66,7 @@ trait Cat {
 
 
   // Housekeeping
-  override def toString() = catToString("Cat", this)
+  override def toString = catToString("Cat", this)
 
   override def equals(o: Any) = o match {
     case o: Cat => catEquals(this, o)
@@ -114,15 +114,19 @@ object Exercise1 {
      *
      * How can we construct the set (ie Stream) of them? 
      */
-    type Arr = ???
-    def arrows: Stream[Arr] = ???
-    /** 
+    type Arr = (Obj, Obj)
+    def arrows: Stream[Arr] = for {
+      c <- setOfClasses
+      d <- setOfClasses if c.isSubTypeOf(d)
+    } yield (c, d)
+
+    /**
      * Exercise 1b. 
      * 
      * How can we get the domain and codomain objects for an arrow?
      */
-    def dom(f: Arr): Class[_] = ???
-    def cod(f: Arr): Class[_] = ???
+    def dom(f: Arr): Class[_] = f._1
+    def cod(f: Arr): Class[_] = f._2
 
     /**
      * Exercise 1c. Identity 
@@ -133,7 +137,7 @@ object Exercise1 {
      * Composing with any other subtyping relationship must just
      * return the other one.
      */
-    def id(obj: Class[_]): Arr = ???
+    def id(obj: Class[_]): Arr = (obj, obj)
 
     /**
      * Exercise 1d. Composition 
@@ -150,7 +154,7 @@ object Exercise1 {
      * 
      * (Don't forget to make it associative!)
      */
-    def comp(g: Arr, f: Arr): Arr = ??? 
+    def comp(g: Arr, f: Arr): Arr = (f._1, g._2)
 
   }
 
@@ -164,12 +168,15 @@ object Exercise1 {
     type Obj = S
     def objects: Stream[Obj] = set
 
-    type Arr = ???
-    def arrows: Stream[Arr] = ??? 
-    def dom(f: Arr): Obj = ???
-    def cod(f: Arr): Obj = ???
+    type Arr = (S, S)
+    def arrows: Stream[Arr] = for {
+      c <- set
+      d <- set if orderingFn(c, d)
+    } yield (c, d)
+    def dom(f: Arr): Obj = f._1
+    def cod(f: Arr): Obj = f._2
 
-    def comp(g: Arr, f: Arr): Arr = ???
-    def id(obj: Obj): Arr = ???
+    def comp(g: Arr, f: Arr): Arr = (f._1, g._2)
+    def id(obj: Obj): Arr = (obj, obj)
   }
 }

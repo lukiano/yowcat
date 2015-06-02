@@ -33,11 +33,11 @@ trait Functor {
  * The simplest functor is of course the identity functor, 
  * which maps a category to itself.
  */
-case class IdFunctor(val cat: Cat) extends Functor {
+case class IdFunctor(cat: Cat) extends Functor {
   val dom, cod: cat.type = cat
 
-  def mapArr(arr: cat.Arr): cat.Arr = ???
-  def mapObj(obj: cat.Obj): cat.Obj = ???
+  def mapArr(arr: cat.Arr): cat.Arr = arr
+  def mapObj(obj: cat.Obj): cat.Obj = obj
 
   override def toString = s"IdFunctor($cat)"
 }
